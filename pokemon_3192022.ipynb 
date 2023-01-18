@@ -1,0 +1,227 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "from pprint import pprint"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "valid_moves = {'Electric': ['Thunder', 'Thunderbolt', 'Wild Charge'],\n",
+    "               'Normal': ['Tail Whip', 'Quick Attack'],\n",
+    "               'Steel': ['Iron Tail', 'Iron Head', 'Flash Cannon']            \n",
+    "              }\n",
+    "\n",
+    "electric_move_stats = {'Thunderbolt': {'Power': 90, 'Accuracy': 100},\n",
+    "                      'Thunder': {'Power': 110, 'Accuracy': 70},\n",
+    "                       'Wild Charge': {'Power': 90, 'Accuracy': 100}\n",
+    "                      }\n",
+    "\n",
+    "normal_move_stats   = {'Tail Whip': {'Power': 0, 'Accuracy': 100},\n",
+    "                       'Quick Attack': {'Power': 40, 'Accuracy': 100}\n",
+    "                      }\n",
+    "\n",
+    "steel_move_stats = {'Iron Tail': {'Power': 100, 'Accuracy': 75}\n",
+    "                   }\n",
+    "\n",
+    "\n",
+    "def identify_move_stats(name, move_type):\n",
+    "    if name not in valid_moves[move_type]:\n",
+    "        print('Error, %s not a valid move' % name)\n",
+    "        return None\n",
+    "        \n",
+    "    if move_type == 'Electric':\n",
+    "        return electric_move_stats[name]\n",
+    "    elif move_type == 'Normal':\n",
+    "        return normal_move_stats[name]\n",
+    "    elif move_type == 'Steel':\n",
+    "        return steel_move_stats[name]\n",
+    "\n",
+    "\n",
+    "\n",
+    "\n",
+    "class pikachu(object):\n",
+    "    \n",
+    "    def __init__(self, level):\n",
+    "        self.moves = {}\n",
+    "        self.level = level\n",
+    "        self.type  = ['thunder', 'steel']\n",
+    "        \n",
+    "        self.maximum_stats   = {'health': 35, 'attack': 55, 'defense': 40}\n",
+    "        self.effective_stats = {'health': None, 'attack': None, 'defense': None}\n",
+    "        self._stat_calculation()\n",
+    "        self.current_hp = self.effective_stats['health']\n",
+    "        self.alive = True\n",
+    "           \n",
+    "        \n",
+    "    def _stat_calculation(self):\n",
+    "        \n",
+    "        # lambda function\n",
+    "        stat_calc = lambda x,y: int(x/100.*y)\n",
+    "        \n",
+    "        health = self.maximum_stats['health']\n",
+    "        effective_health = max(stat_calc(self.level, health), 5)\n",
+    "        self.effective_stats['health'] = effective_health\n",
+    "        \n",
+    "        attack = self.maximum_stats['attack']\n",
+    "        effective_attack = max(stat_calc(self.level, attack), 5)\n",
+    "        self.effective_stats['attack'] = effective_attack\n",
+    "        \n",
+    "        defense = self.maximum_stats['defense']\n",
+    "        effective_defense = max(stat_calc(self.level, defense), 5)\n",
+    "        self.effective_stats['defense'] = effective_defense\n",
+    "        \n",
+    "        \n",
+    "        \n",
+    "    def add_move(self, name=None, move_type=None):\n",
+    "        if len(self.moves.keys()) == 4:\n",
+    "            print('Error, can only have 4 moves maximum')\n",
+    "            return\n",
+    "        \n",
+    "        move_stats = identify_move_stats(name, move_type)\n",
+    "        if move_stats is not None: self.moves[name] = move_stats\n",
+    "  \n",
+    "    def print_stats(self):\n",
+    "        pprint(self.effective_stats)\n",
+    "        \n",
+    "    def print_moves(self):\n",
+    "        pprint(self.moves)\n",
+    "        \n",
+    "        \n",
+    "        \n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def damage_calculation(level, move_power, self_attack, target_defense):\n",
+    "    ad = self_attack / target_defense\n",
+    "    dmg = 2. + ( 0.4 * level * move_power * ad) / 50.\n",
+    "    return round(dmg)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "{'attack': 27, 'defense': 20, 'health': 17}\n",
+      "{'Iron Tail': {'Accuracy': 75, 'Power': 100},\n",
+      " 'Quick Attack': {'Accuracy': 100, 'Power': 40},\n",
+      " 'Tail Whip': {'Accuracy': 100, 'Power': 0},\n",
+      " 'Thunderbolt': {'Accuracy': 100, 'Power': 90}}\n"
+     ]
+    }
+   ],
+   "source": [
+    "\n",
+    "pika1 = pikachu(50)\n",
+    "\n",
+    "pika1.add_move(name='Thunderbolt',move_type='Electric')\n",
+    "pika1.add_move(name='Tail Whip',move_type='Normal')\n",
+    "pika1.add_move(name='Quick Attack',move_type='Normal')\n",
+    "pika1.add_move(name='Iron Tail',move_type='Steel')\n",
+    "\n",
+    "pika1.print_stats()\n",
+    "pika1.print_moves()\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "{'attack': 11, 'defense': 8, 'health': 7}\n",
+      "{'Iron Tail': {'Accuracy': 75, 'Power': 100},\n",
+      " 'Quick Attack': {'Accuracy': 100, 'Power': 40},\n",
+      " 'Tail Whip': {'Accuracy': 100, 'Power': 0},\n",
+      " 'Thunderbolt': {'Accuracy': 100, 'Power': 90}}\n"
+     ]
+    }
+   ],
+   "source": [
+    "\n",
+    "pika2 = pikachu(20)\n",
+    "\n",
+    "pika2.add_move(name='Thunderbolt',move_type='Electric')\n",
+    "pika2.add_move(name='Tail Whip',move_type='Normal')\n",
+    "pika2.add_move(name='Quick Attack',move_type='Normal')\n",
+    "pika2.add_move(name='Iron Tail',move_type='Steel')\n",
+    "\n",
+    "pika2.print_stats()\n",
+    "pika2.print_moves()\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "10\n",
+      "17\n"
+     ]
+    }
+   ],
+   "source": [
+    "move_damage = damage_calculation(pika2.level, pika2.moves['Thunderbolt']['Power'], pika2.effective_stats['attack'], pika1.effective_stats['defense'])\n",
+    "print(move_damage)\n",
+    "print(pika1.current_hp)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}
